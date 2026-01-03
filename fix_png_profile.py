@@ -1,4 +1,4 @@
-from PIL import Image
+from PIL import Image, PngImagePlugin
 import os
 
 TARGET_DIRS = [
@@ -11,7 +11,9 @@ TARGET_DIRS = [
 def clean_png(path):
     img = Image.open(path)
     img = img.convert("RGBA")   # 색상 프로파일 제거 핵심
-    img.save(path, optimize=True)
+    img.info.pop("icc_profile", None)
+    img.info.pop("srgb", None)
+    img.save(path, optimize=True, pnginfo=PngImagePlugin.PngInfo())
 
 for folder in TARGET_DIRS:
     if not os.path.exists(folder):
